@@ -17,7 +17,7 @@ import { GetUser } from '../auth/decorator';
 import { JwtGuard } from '../auth/guard';
 
 @UseGuards(JwtGuard)
-@Controller('post')
+@Controller('posts')
 export class PostController {
   constructor(private postService: PostService) {}
 

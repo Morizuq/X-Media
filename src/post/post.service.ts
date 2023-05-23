@@ -60,7 +60,7 @@ export class PostService {
     if (!post || post.userId !== userId)
       throw new ForbiddenException('Access Denied');
 
-    return this.prisma.post.update({
+    return await this.prisma.post.update({
       where: {
         id: postId,
       },
