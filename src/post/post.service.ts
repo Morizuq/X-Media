@@ -65,7 +65,7 @@ export class PostService {
         id: postId,
       },
       data: {
-        ...dto,
+        ...dto
       },
     });
   }

@@ -17,6 +17,7 @@ model User {
 
   email String @unique
   hash  String
+  role Role @default(USER)
 
   firstName String?
   lastName  String?
@@ -38,4 +39,9 @@ model Post {
   user   User @relation(fields: [userId], references: [id])
 
   @@map("posts")
+}
+
+enum Role {
+  USER
+  ADMIN
 }

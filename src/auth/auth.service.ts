@@ -6,6 +6,7 @@ import { PrismaClientKnownRequestError } from '@prisma/client/runtime';
 import * as argon from 'argon2';
 import { AuthDto } from 'src/auth/dto';
 import { PrismaService } from '../prisma/prisma.service';
+import { response } from 'express';
 
 @Injectable()
 export class AuthService {
