@@ -18,6 +18,7 @@ model User {
   email String @unique
   hash  String
   role Role @default(USER)
+  passwordResetToken String?
 
   firstName String?
   lastName  String?

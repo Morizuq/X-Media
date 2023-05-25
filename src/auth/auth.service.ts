@@ -2,11 +2,13 @@ import { ForbiddenException, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime';
+import * as crypto from 'crypto';
 
 import * as argon from 'argon2';
-import { AuthDto } from 'src/auth/dto';
+import { AuthDto, ForgetPasswordDto, ResetPasswordDto } from '../auth/dto';
 import { PrismaService } from '../prisma/prisma.service';
-import { response } from 'express';
+import { MailService } from 'src/mail/mail.service';
+import { Request } from 'express';
 
 @Injectable()
 export class AuthService {
@@ -14,6 +16,7 @@ export class AuthService {
     private prisma: PrismaService,
     private jwt: JwtService,
     private config: ConfigService,
+    private mailService: MailService,
   ) {}
 
   //Create token
@@ -39,14 +42,17 @@ export class AuthService {
   //Create user
   async signup(dto: AuthDto) {
     try {
+      //Hash password
       const hash = await argon.hash(dto.password);
-
+      //Create User
       const user = await this.prisma.user.create({
         data: {
           email: dto.email,
           hash,
         },
       });
+      //Send welcome mail
+      await this.mailService.sendWelcome(user);
       //Create and send token
       return this.signToken(user.id, user.email);
     } catch (error) {
@@ -58,6 +64,7 @@ export class AuthService {
     }
   }
 
+  //Sign user in
   async signin(dto: AuthDto) {
     //Find user by email
     // console.log({ dto });
@@ -75,5 +82,74 @@ export class AuthService {
 
     //Create and send token
     return this.signToken(user.id, user.email);
+  }
+
+  //Send Reset password url
+  async forgetPassword(dto: ForgetPasswordDto, req: Request) {
+    //Find user
+    const user = await this.prisma.user.findUnique({
+      where: {
+        email: dto.email,
+      },
+    });
+
+    //If user doesn't exist, throw exception
+    if (!user) throw new ForbiddenException('User Not Found');
+
+    //Create and encrypt reset token
+    const rtoken = crypto.randomBytes(32).toString('hex');
+    const resetToken = crypto.createHash('sha256').update(rtoken).digest('hex');
+
+    try {
+      //Save reset token to the database
+      await this.prisma.user.update({
+        where: {
+          email: dto.email,
+        },
+
+        data: {
+          passwordResetToken: resetToken,
+        },
+      });
+      //Send password reset email
+      await this.mailService.sendReset(user, resetToken, req);
+      //Send response
+      return {
+        msg: 'Email Sent Successsfully',
+      };
+    } catch (error) {
+      //Throw error if any
+      throw error;
+    }
+  }
+
+  //Reset user password
+  async resetPassword(dto: ResetPasswordDto, token: string) {
+    try {
+      //Encrypt password
+      const hash = await argon.hash(dto.password);
+      //Find user by reset token
+      const user = await this.prisma.user.findFirst({
+        where: {
+          passwordResetToken: token,
+        },
+      });
+      //If user not found, throw error
+      if (!user) throw new ForbiddenException('Invalid Cedentials');
+      //Update user password
+      await this.prisma.user.update({
+        where: {
+          email: user.email,
+        },
+        data: {
+          hash: hash,
+        },
+      });
+
+      return this.signToken(user.id, user.email);
+    } catch (error) {
+      //Throw error if any
+      throw error;
+    }
   }
 }
