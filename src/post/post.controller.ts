@@ -94,23 +94,23 @@ export class PostController {
 
   //Comments
   @Get(':postId/comments')
-  getPostComments(@Param('postId') postId: number) {
+  getPostComments(@Param('postId', ParseIntPipe) postId: number) {
     return this.commentService.getAllPostComments(postId);
   }
 
   @Post(':postId/comments')
   createComment(
-    @GetUser() userId: number,
-    @Param('postId') postId: number,
-    dto: CommentDto,
+    @GetUser('id') userId: number,
+    @Param('postId', ParseIntPipe) postId: number,
+    @Body() dto: CommentDto,
   ) {
     return this.commentService.createComment(postId, userId, dto);
   }
 
   @Get(':postId/comments/:commentId')
   getComment(
-    @Param('postId') postId: number,
-    @Param('commentId') commentId: number,
+    @Param('postId', ParseIntPipe) postId: number,
+    @Param('commentId', ParseIntPipe) commentId: number,
   ) {
     return this.commentService.getComment(postId, commentId);
   }
@@ -118,9 +118,9 @@ export class PostController {
   @Patch(':postId/comments/:commentId')
   updateComment(
     @GetUser('id') userId: number,
-    @Param(':postId') postId: number,
-    @Param('commentId') commentId: number,
-    dto: CommentDto,
+    @Param('postId', ParseIntPipe) postId: number,
+    @Param('commentId', ParseIntPipe) commentId: number,
+    @Body() dto: CommentDto,
   ) {
     return this.commentService.updateComment(postId, userId, commentId, dto);
   }
@@ -128,8 +128,8 @@ export class PostController {
   @Delete(':postId/comments/:commentId')
   deleteComment(
     @GetUser('id') userId: number,
-    @Param('postId') postId: number,
-    @Param('commentId') commentId: number,
+    @Param('postId', ParseIntPipe) postId: number,
+    @Param('commentId', ParseIntPipe) commentId: number,
   ) {
     return this.commentService.deleteComment(userId, postId, commentId);
   }
