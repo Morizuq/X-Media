@@ -16,6 +16,10 @@ export class PostService {
     return post;
   }
 
+  getAllPosts(){
+    return this.prisma.post.findMany()
+  }
+
   getPosts(userId: number) {
     return this.prisma.post.findMany({
       where: {

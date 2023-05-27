@@ -15,14 +15,16 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  email String @unique
-  hash  String
-  role Role @default(USER)
+  email              String  @unique
+  hash               String
+  role               Role    @default(USER)
   passwordResetToken String?
 
   firstName String?
   lastName  String?
+  bio       String?
   posts     Post[]
+  comments  Comment[]
 
   @@map("users")
 }
@@ -32,14 +34,30 @@ model Post {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  title   String
-  content String
-  link    String?
-
-  userId Int
-  user   User @relation(fields: [userId], references: [id])
+  title    String
+  content  String
+  link     String?
+  comments Comment[]
+  userId   Int
+  user     User       @relation(fields: [userId], references: [id])
 
   @@map("posts")
+}
+
+model Comment {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  content String
+
+  userId Int
+  postId Int
+
+  user User @relation(fields: [userId], references: [id])
+  post Post @relation(fields: [postId], references: [id])
+
+  @@map("comments")
 }
 
 enum Role {
