@@ -21,12 +21,16 @@ import { JwtGuard } from '../auth/guard';
 import { Role } from '../auth/enum';
 import { RolesGuard } from '../auth/guard/roles.guard';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { diskStorage, memoryStorage } from 'multer';
+import { CommentService } from '../comment/comment.service';
+import { CommentDto } from '../comment/dto';
 
 @UseGuards(JwtGuard, RolesGuard)
 @Controller('posts')
 export class PostController {
-  constructor(private postService: PostService) {}
+  constructor(
+    private postService: PostService,
+    private commentService: CommentService,
+  ) {}
 
   @Get('/feed')
   getAllPosts() {
@@ -39,7 +43,7 @@ export class PostController {
     @UploadedFile(
       new ParseFilePipeBuilder()
         .addFileTypeValidator({
-          fileType: 'png',//todo
+          fileType: 'png', //todo
         })
         // .addMaxSizeValidator({ maxSize: 4000 })
         .build(),
@@ -86,5 +90,47 @@ export class PostController {
     @Param('id', ParseIntPipe) postId: number,
   ) {
     return this.postService.deletePost(userId, postId);
+  }
+
+  //Comments
+  @Get(':postId/comments')
+  getPostComments(@Param('postId') postId: number) {
+    return this.commentService.getAllPostComments(postId);
+  }
+
+  @Post(':postId/comments')
+  createComment(
+    @GetUser() userId: number,
+    @Param('postId') postId: number,
+    dto: CommentDto,
+  ) {
+    return this.commentService.createComment(postId, userId, dto);
+  }
+
+  @Get(':postId/comments/:commentId')
+  getComment(
+    @Param('postId') postId: number,
+    @Param('commentId') commentId: number,
+  ) {
+    return this.commentService.getComment(postId, commentId);
+  }
+
+  @Patch(':postId/comments/:commentId')
+  updateComment(
+    @GetUser('id') userId: number,
+    @Param(':postId') postId: number,
+    @Param('commentId') commentId: number,
+    dto: CommentDto,
+  ) {
+    return this.commentService.updateComment(postId, userId, commentId, dto);
+  }
+
+  @Delete(':postId/comments/:commentId')
+  deleteComment(
+    @GetUser('id') userId: number,
+    @Param('postId') postId: number,
+    @Param('commentId') commentId: number,
+  ) {
+    return this.commentService.deleteComment(userId, postId, commentId);
   }
 }

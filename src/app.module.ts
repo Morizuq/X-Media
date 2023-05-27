@@ -6,6 +6,7 @@ import { PostModule } from './post/post.module';
 import { ConfigModule } from '@nestjs/config';
 import { MailModule } from './mail/mail.module';
 import { MulterModule } from '@nestjs/platform-express';
+import { CommentModule } from './comment/comment.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { MulterModule } from '@nestjs/platform-express';
     PrismaModule,
     PostModule,
     MailModule,
+    CommentModule,
   ],
 })
 export class AppModule {}
