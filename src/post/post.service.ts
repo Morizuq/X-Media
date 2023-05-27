@@ -16,8 +16,8 @@ export class PostService {
     return post;
   }
 
-  getAllPosts(){
-    return this.prisma.post.findMany()
+  getAllPosts() {
+    return this.prisma.post.findMany();
   }
 
   getPosts(userId: number) {
@@ -33,6 +33,9 @@ export class PostService {
       where: {
         id: postId,
         userId,
+      },
+      include: {
+        comments: true,
       },
     });
   }
@@ -69,7 +72,7 @@ export class PostService {
         id: postId,
       },
       data: {
-        ...dto
+        ...dto,
       },
     });
   }
