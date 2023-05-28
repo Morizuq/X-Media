@@ -23,6 +23,7 @@ import { RolesGuard } from '../auth/guard/roles.guard';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { CommentService } from '../comment/comment.service';
 import { CommentDto } from '../comment/dto';
+import { LikeService } from '../like/like.service';
 
 @UseGuards(JwtGuard, RolesGuard)
 @Controller('posts')
@@ -30,6 +31,7 @@ export class PostController {
   constructor(
     private postService: PostService,
     private commentService: CommentService,
+    private likeService: LikeService,
   ) {}
 
   @Get('/feed')
@@ -132,5 +134,23 @@ export class PostController {
     @Param('commentId', ParseIntPipe) commentId: number,
   ) {
     return this.commentService.deleteComment(userId, postId, commentId);
+  }
+
+  //Likes
+  @Post(':postId/likes')
+  createLike(
+    @GetUser('id') userId: number,
+    @Param('postId', ParseIntPipe) postId: number,
+  ) {
+    return this.likeService.createLike(postId, userId);
+  }
+
+  @Delete(':postId/likes/:likeId')
+  removeLike(
+    @GetUser('id') userId: number,
+    @Param('postId', ParseIntPipe) postId: number,
+    @Param('likeId', ParseIntPipe) likeId: number,
+  ) {
+    return this.likeService.removeLike(postId, userId, likeId);
   }
 }

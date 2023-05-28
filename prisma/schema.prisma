@@ -29,6 +29,7 @@ model User {
   followers     Follows[]      @relation("following")
   following     Follows[]      @relation("follower")
   notifications Notification[]
+  likes         Like[]
 
   @@map("users")
 }
@@ -44,6 +45,7 @@ model Post {
   comments Comment[]
   userId   Int
   user     User      @relation(fields: [userId], references: [id])
+  likes    Like[]
 
   @@map("posts")
 }
@@ -62,6 +64,18 @@ model Comment {
   post Post @relation(fields: [postId], references: [id])
 
   @@map("comments")
+}
+
+model Like {
+  id Int @id @default(autoincrement())
+
+  userId Int
+  postId Int
+
+  user User @relation(fields: [userId], references: [id])
+  post Post @relation(fields: [postId], references: [id])
+
+  @@map("likes")
 }
 
 model Follows {
