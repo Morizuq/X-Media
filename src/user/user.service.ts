@@ -1,10 +1,15 @@
 import { ForbiddenException, Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { EditDto } from './dto/edit.dto';
+import { NotificationService } from '../notification/notification.service';
+import { NotificationType } from '../notification/enum';
 
 @Injectable()
 export class UserService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private notificationService: NotificationService,
+  ) {}
 
   async updateuser(userId: number, dto: EditDto) {
     const user = await this.prisma.user.update({
@@ -31,6 +36,7 @@ export class UserService {
         id: followingId,
       },
     });
+
     if (!user) throw new ForbiddenException('Invalid Credentials');
 
     try {
@@ -51,6 +57,12 @@ export class UserService {
     } catch (error) {
       throw new Error('Failed to follow user');
     }
+
+    await this.notificationService.createNotification(
+      followerId,
+      NotificationType.FOLLOW,
+      `User ${followerId} followed you`,
+    );
 
     return {
       message: `Followed user ${user.id}`,

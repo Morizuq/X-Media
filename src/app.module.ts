@@ -8,6 +8,7 @@ import { MailModule } from './mail/mail.module';
 import { MulterModule } from '@nestjs/platform-express';
 import { CommentModule } from './comment/comment.module';
 import { SearchModule } from './search/search.module';
+import { NotificationModule } from './notification/notification.module';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { SearchModule } from './search/search.module';
     MailModule,
     CommentModule,
     SearchModule,
+    NotificationModule,
   ],
 })
 export class AppModule {}

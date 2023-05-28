@@ -1,20 +1,38 @@
 import { ForbiddenException, Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CommentDto } from './dto';
+import { NotificationService } from '../notification/notification.service';
+import { NotificationType } from '../notification/enum/index';
 
 @Injectable()
 export class CommentService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private notificationService: NotificationService,
+  ) {}
 
   //Create comment
   async createComment(postId: number, userId: number, dto: CommentDto) {
-    return await this.prisma.comment.create({
+    //Fetch post
+    const post = await this.prisma.post.findUnique({
+      where: { id: postId },
+    });
+    //Create comment
+    await this.prisma.comment.create({
       data: {
         userId,
         postId,
         content: dto.content,
       },
     });
+    //Send notification
+    await this.notificationService.createNotification(
+      post.userId,
+      NotificationType.COMMENT,
+      `You have a comment from user ${userId}`,
+    );
+
+    return { message: 'Successfull' };
   }
 
   //Get all comment for a post
