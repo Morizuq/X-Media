@@ -1,4 +1,13 @@
-import { Body, Controller, Get, Patch, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  ParseIntPipe,
+  Patch,
+  Post,
+  UseGuards,
+} from '@nestjs/common';
 import { GetUser } from '../auth/decorator';
 import { User } from '@prisma/client';
 
@@ -19,5 +28,21 @@ export class UserController {
   @Patch()
   updateUser(@GetUser('id') userId: number, @Body() dto: EditDto) {
     return this.userService.updateuser(userId, dto);
+  }
+
+  @Post('/follow/:followingId')
+  followUser(
+    @GetUser('id') followerId: number,
+    @Param('followingId', ParseIntPipe) followingId: number,
+  ) {
+    return this.userService.followUser(followingId, followerId);
+  }
+
+  @Post('/unfollow/:followingId')
+  unfollowUser(
+    @GetUser('id') followerID: number,
+    @Param('followingId', ParseIntPipe) followingId: number,
+  ) {
+    return this.userService.unfollowUser(followingId, followerID);
   }
 }
