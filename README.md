@@ -1,14 +1,12 @@
 # X-Media API Documentation
 
+## Description
+
 This documentation provides an overview of the endpoints available in the X-media API built with NestJS, TypeScript, and Prisma. The API allows users to perform various actions related to authentication, posts, comments, likes, notifications, user management, and search.
 
 <p align="center">
   <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
 </p>
-
-## Description
-
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
 
 ## Installation
 
