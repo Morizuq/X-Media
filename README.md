@@ -93,7 +93,7 @@ DELETE /posts/:postId/comments/:commentId
 //Delete a specific comment by its ID.
 
 POST /posts/:postId/likes
-L//ike a specific post.
+//ike a specific post.
 
 DELETE /posts/:postId/likes/:likeId
 //Unlike a specific post.
