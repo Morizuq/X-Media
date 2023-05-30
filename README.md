@@ -100,7 +100,6 @@ DELETE /posts/:postId/likes/:likeId
 
 ## Notification Endpoints
 ```js
-//ike a specific post.
 
 GET /notifications/unread
 //Retrieve all unread notifications for the currently logged-in user.
