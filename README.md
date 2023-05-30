@@ -91,7 +91,7 @@ DELETE /posts/:postId/comments/:commentId
 //Delete a specific comment by its ID.
 
 POST /posts/:postId/likes
-//ike a specific post.
+//Like a specific post.
 
 DELETE /posts/:postId/likes/:likeId
 //Unlike a specific post.
@@ -100,6 +100,7 @@ DELETE /posts/:postId/likes/:likeId
 
 ## Notification Endpoints
 ```js
+//ike a specific post.
 
 GET /notifications/unread
 //Retrieve all unread notifications for the currently logged-in user.
