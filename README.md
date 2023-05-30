@@ -80,9 +80,6 @@ DELETE /posts/:id
 
 GET /posts/:postId/comments
 //Retrieve all comments for a specific post.
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
-</p>
 
 POST /posts/:postId/comments
 //Create a new comment for a specific post.
