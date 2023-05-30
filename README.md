@@ -16,7 +16,6 @@ $ npm install
 
 ## Running the app
 
-      return this.signToken(user.id, user.email);
 ```bash
 # development
 $ npm run start
