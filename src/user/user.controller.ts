@@ -8,14 +8,16 @@ import {
   Post,
   UseGuards,
 } from '@nestjs/common';
-import { GetUser } from '../auth/decorator';
+import { GetUser, Roles } from '../auth/decorator';
 import { User } from '@prisma/client';
 
 import { EditDto } from './dto/edit.dto';
 import { UserService } from './user.service';
 import { JwtGuard } from '../auth/guard';
+import { Role } from '../auth/enum';
+import { RolesGuard } from '../auth/guard/roles.guard';
 
-@UseGuards(JwtGuard)
+@UseGuards(JwtGuard, RolesGuard)
 @Controller('users')
 export class UserController {
   constructor(private userService: UserService) {}
@@ -44,5 +46,17 @@ export class UserController {
     @Param('followingId', ParseIntPipe) followingId: number,
   ) {
     return this.userService.unfollowUser(followingId, followerID);
+  }
+
+  @Roles(Role.ADMIN)
+  @Patch('/make-admin/:userId')
+  makeAdmin(@Param('userId', ParseIntPipe) userId: number){
+    return this.userService.makeAdmin(userId)
+  }
+
+  @Roles(Role.ADMIN)
+  @Patch('/make-user/:userId')
+  makeUser(@Param('userId', ParseIntPipe) userId: number){
+    return this.userService.makeUser(userId)
   }
 }

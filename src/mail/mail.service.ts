@@ -8,7 +8,7 @@ export class MailService {
   constructor(private mailerService: MailerService) {}
 
   async sendWelcome(user: User) {
-    console.log({user})
+    // console.log({user})
     await this.mailerService.sendMail({
       to: user.email,
       subject: 'Welcome',

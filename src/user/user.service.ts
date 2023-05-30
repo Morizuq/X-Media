@@ -3,6 +3,7 @@ import { PrismaService } from '../prisma/prisma.service';
 import { EditDto } from './dto/edit.dto';
 import { NotificationService } from '../notification/notification.service';
 import { NotificationType } from '../notification/enum';
+import { Role } from '../auth/enum';
 
 @Injectable()
 export class UserService {
@@ -69,6 +70,7 @@ export class UserService {
     };
   }
 
+  //Unfollow user
   async unfollowUser(followingId: number, followerId: number) {
     const follow = await this.prisma.follows.findFirst({
       where: {
@@ -95,5 +97,45 @@ export class UserService {
     return {
       message: `Unfollowed user ${followingId}`,
     };
+  }
+
+  //Make a user admin => Can only be used by super users
+  async makeAdmin(userId: number) {
+    //Find if user exists
+    const user = await this.prisma.user.findUnique({ where: { id: userId } });
+
+    //If user doesn't exist, throw exception
+    if (!user) throw new ForbiddenException('Invalid Credentials');
+
+    await this.prisma.user.update({
+      where: {
+        id: userId,
+      },
+      data: {
+        role: Role.ADMIN,
+      },
+    });
+
+    return { message: 'successful' };
+  }
+
+  //Make an admin user => can only be used by super users
+  async makeUser(userId: number) {
+    //Find if user exists
+    const user = await this.prisma.user.findUnique({ where: { id: userId } });
+
+    //If user doesn't exist, throw exception
+    if (!user) throw new ForbiddenException('Invalid Credentials');
+
+    await this.prisma.user.update({
+      where: {
+        id: userId,
+      },
+      data: {
+        role: Role.USER,
+      },
+    });
+
+    return { message: 'successful' };
   }
 }

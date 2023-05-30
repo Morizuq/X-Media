@@ -9,6 +9,7 @@ import { AuthDto, ForgetPasswordDto, ResetPasswordDto } from '../auth/dto';
 import { PrismaService } from '../prisma/prisma.service';
 import { MailService } from 'src/mail/mail.service';
 import { Request } from 'express';
+import { Role } from './enum';
 
 @Injectable()
 export class AuthService {
@@ -37,6 +38,32 @@ export class AuthService {
     return {
       access_token: token,
     };
+  }
+
+  //Create Admin
+  async createAdmin(dto: AuthDto) {
+    try {
+      //Hash password
+      const hash = await argon.hash(dto.password);
+      //Create admin
+      const user = await this.prisma.user.create({
+        data: {
+          hash,
+          email: dto.email,
+          role: Role.ADMIN,
+        },
+      });
+      //Send welcome email
+      await this.mailService.sendWelcome(user);
+      //Create and send token
+      return this.signToken(user.id, user.email);
+    } catch (error) {
+      if (error instanceof PrismaClientKnownRequestError)
+        if (error.code === 'P2002')
+          throw new ForbiddenException('Credentials Taken');
+
+      throw error;
+    }
   }
 
   //Create user

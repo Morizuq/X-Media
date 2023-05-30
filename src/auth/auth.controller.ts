@@ -16,6 +16,11 @@ import { Request } from 'express';
 export class AuthController {
   constructor(private authService: AuthService) {}
 
+  @Post('/create-admin')
+  createAdmin(@Body() dto: AuthDto) {
+    return this.authService.createAdmin(dto);
+  }
+
   @Post('/signup')
   singup(@Body() dto: AuthDto) {
     return this.authService.signup(dto);

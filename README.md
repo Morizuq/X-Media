@@ -16,6 +16,7 @@ $ npm install
 
 ## Running the app
 
+      return this.signToken(user.id, user.email);
 ```bash
 # development
 $ npm run start
@@ -42,6 +43,9 @@ $ npm run test:cov
 
 ## Authentication Endpoints
 ```javascript
+
+POST /auth/create-admin
+//Create a new super-user account(admin)
 
 POST /auth/signup
 // Create a new user account.
@@ -134,6 +138,12 @@ POST /users/follow/:followingId
 
 POST /users/unfollow/:followingId
 //Unfollow a user that is already being followed.
+
+PATCH /users/make-admin/:userId
+//Change a user's role from USER to ADMIN
+
+PATCH /users/make-user/:userId
+//Change a user's role from ADMIN to USER
 
 ```
 
